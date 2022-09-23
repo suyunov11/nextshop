@@ -12,6 +12,8 @@ export default function Home() {
       <div className="bg-slate-100 p-2">
         <p className="text-2xl font-bold ">NextShop</p>
         <p> Byoungcheon Lee </p>
+        <p> - TailwindCSS</p>
+        <p> - MongoDB </p>
       </div>
     </div>
   )
