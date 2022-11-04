@@ -91,7 +91,7 @@ export default function LoginScreen() {
         </div>
 
         <div className="mb-4">
-          Don't have an account? <Link href="register">Register</Link>
+          Don&apos;t have an account? <Link href="register">Register</Link>
         </div>
       </form>
     </Layout>
