@@ -39,6 +39,58 @@ export default function LoginScreen() {
     }
   }
 
+  const githubLoginHandler = async () => {
+    try {
+      const result = await signIn('github', {
+        redirect: false,
+      })
+      if (result.error) {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error(getError(error))
+    }
+  }
+
+  const googleLoginHandler = async () => {
+    try {
+      const result = await signIn('google', {
+        redirect: false,
+      })
+      if (result.error) {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error(getError(error))
+    }
+  }
+
+  const kakaoLoginHandler = async () => {
+    try {
+      const result = await signIn('kakao', {
+        redirect: false,
+      })
+      if (result.error) {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error(getError(error))
+    }
+  }
+
+  const naverLoginHandler = async () => {
+    try {
+      const result = await signIn('naver', {
+        redirect: false,
+      })
+      if (result.error) {
+        toast.error(result.error)
+      }
+    } catch (error) {
+      toast.error(getError(error))
+    }
+  }
+
   return (
     <Layout title="Login">
       <form
@@ -47,51 +99,97 @@ export default function LoginScreen() {
       >
         <h1 className="mb-4 text-xl">Login</h1>
 
-        <div className="mb-4">
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            {...register('email', {
-              required: 'Please enter email',
-              pattern: {
-                value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
-                message: 'Please enter valid email',
-              },
-            })}
-            className="w-full"
-            id="email"
-            autoFocus
-          />
-          {errors.email && (
-            <div className="text-red-500">{errors.email.message}</div>
-          )}
-        </div>
+        <div className="bg-blue-300 p-5 mb-2">
+          <div className="mb-4">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              {...register('email', {
+                required: 'Please enter email',
+                pattern: {
+                  value: /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$/i,
+                  message: 'Please enter valid email',
+                },
+              })}
+              className="w-full"
+              id="email"
+              autoFocus
+            />
+            {errors.email && (
+              <div className="text-red-500">{errors.email.message}</div>
+            )}
+          </div>
 
-        <div className="mb-4">
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            {...register('password', {
-              required: 'Please enter password',
-              minLength: { value: 3, message: 'Password is more than 3 chars' },
-            })}
-            className="w-full"
-            id="password"
-            autoFocus
-          />
-          {errors.password && (
-            <div className="text-red-500">{errors.password.message}</div>
-          )}
-        </div>
+          <div className="mb-4">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              {...register('password', {
+                required: 'Please enter password',
+                minLength: {
+                  value: 3,
+                  message: 'Password is more than 3 chars',
+                },
+              })}
+              className="w-full"
+              id="password"
+              autoFocus
+            />
+            {errors.password && (
+              <div className="text-red-500">{errors.password.message}</div>
+            )}
+          </div>
 
-        <div className="mb-4">
-          <button type="submit" className="primary-button">
-            Login
-          </button>
-        </div>
+          <div className="mb-4">
+            <button type="submit" className="primary-button">
+              Login
+            </button>
+          </div>
 
-        <div className="mb-4">
-          Don&apos;t have an account? <Link href="register">Register</Link>
+          <div className="mb-4">
+            Don&apos;t have an account? <Link href="register">Register</Link>
+          </div>
+        </div>
+        <div className="p-5 bg-slate-500 rounded-lg">
+          <div className="mb-4">
+            <button
+              className="primary-button w-full"
+              type="button"
+              onClick={githubLoginHandler}
+            >
+              Github Login
+            </button>
+          </div>
+
+          <div className="mb-4">
+            <button
+              className="primary-button w-full"
+              type="button"
+              onClick={googleLoginHandler}
+            >
+              Google Login
+            </button>
+          </div>
+
+          <div className="mb-4">
+            <button
+              className="primary-button w-full"
+              type="button"
+              onClick={kakaoLoginHandler}
+            >
+              카카오 Login
+            </button>
+          </div>
+
+          <div className="mb-4">
+            <button
+              className="primary-button w-full"
+              type="button"
+              onClick={naverLoginHandler}
+            >
+              네이버 Login
+            </button>
+          </div>
         </div>
       </form>
     </Layout>
