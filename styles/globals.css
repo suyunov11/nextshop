@@ -28,7 +28,11 @@ a {
 }
 
 .dropdown-link {
-  @apply flex p-2 hover:bg-gray-200;
+  @apply flex p-4 hover:bg-gray-200;
+}
+
+.button-link {
+  @apply bg-yellow-400 hover:bg-yellow-500 p-2 m-2 rounded-md mb-4 text-center;
 }
 
 input,
