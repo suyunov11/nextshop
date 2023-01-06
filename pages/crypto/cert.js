@@ -1,55 +1,55 @@
-import React, { useState } from 'react'
-import Layout from '../../components/Layout'
-import Image from 'next/image'
-import x509Pic from '../../public/x509.jpg'
-import certPic from '../../public/cert.jpg'
-import forge from 'node-forge'
-import axios from 'axios'
-import { useSession } from 'next-auth/react'
+import React, { useState } from "react";
+import Layout from "../../components/Layout";
+import Image from "next/image";
+import x509Pic from "../../public/x509.jpg";
+import certPic from "../../public/cert.jpg";
+import forge from "node-forge";
+import axios from "axios";
+import { useSession } from "next-auth/react";
 
-const rsa = forge.pki.rsa
-const pki = forge.pki
+const rsa = forge.pki.rsa;
+const pki = forge.pki;
 
 export default function CertScreen() {
-  const { data: session } = useSession()
-  const userEmail = session?.user.email
-  const lengths = [512, 1024, 2048, 3072]
+  const { data: session } = useSession();
+  const userEmail = session?.user.email;
+  const lengths = [512, 1024, 2048, 3072];
 
-  const [keyLength, setKeyLength] = useState(1024)
-  const [publicKey, setPublicKey] = useState('')
-  const [publicKeyPem, setPublicKeyPem] = useState('')
-  const [privateKey, setPrivateKey] = useState('')
-  const [privateKeyPem, setPrivateKeyPem] = useState('')
+  const [keyLength, setKeyLength] = useState(1024);
+  const [publicKey, setPublicKey] = useState("");
+  const [publicKeyPem, setPublicKeyPem] = useState("");
+  const [privateKey, setPrivateKey] = useState("");
+  const [privateKeyPem, setPrivateKeyPem] = useState("");
 
-  const [serial, setSerial] = useState(101)
-  const [cn, setCn] = useState(userEmail)
-  const [country, setCountry] = useState('KR')
-  const [state, setState] = useState('Gyeonggi-do')
-  const [locality, setLocality] = useState('Goyang-si')
-  const [org, setOrg] = useState('Joongbu Univ.')
-  const [orgUnit, setOrgUnit] = useState('Dept. of Information Security')
-  const [certPem, setCertPem] = useState('')
-  const [caCertPem, setCaCertPem] = useState('')
-  const [result, setResult] = useState(false)
+  const [serial, setSerial] = useState(101);
+  const [cn, setCn] = useState(userEmail);
+  const [country, setCountry] = useState("KR");
+  const [state, setState] = useState("Gyeonggi-do");
+  const [locality, setLocality] = useState("Goyang-si");
+  const [org, setOrg] = useState("Joongbu Univ.");
+  const [orgUnit, setOrgUnit] = useState("Dept. of Information Security");
+  const [certPem, setCertPem] = useState("");
+  const [caCertPem, setCaCertPem] = useState("");
+  const [result, setResult] = useState(false);
 
   const keyGen = () => {
-    const keypair = rsa.generateKeyPair({ bits: keyLength, e: 0x10001 })
-    const pbk = keypair.publicKey
-    const prk = keypair.privateKey
-    const publicKeyPem = pki.publicKeyToPem(pbk)
-    const privateKeyPem = pki.privateKeyToPem(prk)
+    const keypair = rsa.generateKeyPair({ bits: keyLength, e: 0x10001 });
+    const pbk = keypair.publicKey;
+    const prk = keypair.privateKey;
+    const publicKeyPem = pki.publicKeyToPem(pbk);
+    const privateKeyPem = pki.privateKeyToPem(prk);
 
-    setPublicKey(pbk)
-    setPublicKeyPem(publicKeyPem)
-    setPrivateKey(prk)
-    setPrivateKeyPem(privateKeyPem)
-    localStorage.setItem('privateKeyPem', privateKeyPem)
-  }
+    setPublicKey(publicKey);
+    setPublicKeyPem(publicKeyPem);
+    setPrivateKey(privateKey);
+    setPrivateKeyPem(privateKeyPem);
+    localStorage.setItem("privateKeyPem", privateKeyPem);
+  };
 
   const genCert = async () => {
     // 서버에 요청하여 서버가 발급하는 인증서를 받아옴
     await axios
-      .post('/api/crypto/cert', {
+      .post("/api/crypto/cert", {
         serial,
         cn,
         country,
@@ -60,24 +60,24 @@ export default function CertScreen() {
         publicKeyPem,
       })
       .then((res) => {
-        let certPem = res.data.certPem
-        let caCertPem = res.data.caCertPem
-        setCertPem(certPem)
-        setCaCertPem(caCertPem)
-        localStorage.setItem('certPem', certPem)
-        localStorage.setItem('caCertPem', caCertPem)
-      })
-  }
+        let certPem = res.data.certPem;
+        let caCertPem = res.data.caCertPem;
+        setCertPem(certPem);
+        setCaCertPem(caCertPem);
+        localStorage.setItem("certPem", certPem);
+        localStorage.setItem("caCertPem", caCertPem);
+      });
+  };
 
   const verifyCert = async () => {
-    let certPem1 = localStorage.getItem('certPem')
-    let caCertPem1 = localStorage.getItem('caCertPem')
+    let certPem1 = localStorage.getItem("certPem");
+    let caCertPem1 = localStorage.getItem("caCertPem");
 
-    let cert = pki.certificateFromPem(certPem1)
-    let caCert = pki.certificateFromPem(caCertPem1)
-    let result = caCert.verify(cert)
-    setResult(result)
-  }
+    let cert = pki.certificateFromPem(certPem1);
+    let caCert = pki.certificateFromPem(caCertPem1);
+    let result = caCert.verify(cert);
+    setResult(result);
+  };
 
   return (
     <Layout title="Cert">
@@ -366,5 +366,5 @@ export default function CertScreen() {
         </div>
       </form>
     </Layout>
-  )
+  );
 }

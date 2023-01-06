@@ -1,13 +1,13 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
 
 export default function ProductItem({ product }) {
   return (
     <div className="card">
       <Link href={`/product/${product.slug}`}>
         <a>
-          <img
+          <Image
             src={product.image}
             alt={product.name}
             width={500}
@@ -30,5 +30,5 @@ export default function ProductItem({ product }) {
         </button>
       </div>
     </div>
-  )
+  );
 }

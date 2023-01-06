@@ -1,64 +1,72 @@
-import React, { useState } from 'react'
-import Layout from '../../components/Layout'
-import Image from 'next/image'
-import bcryptPic from '../../public/bcrypt.jpg'
-import bcrypt from 'bcryptjs'
-import axios from 'axios'
+import Image from "next/image";
+import React, { useState } from "react";
+import Layout from "../../components/Layout";
+// import forge from 'node-forge'
+import axios from "axios";
+import hashPic from "../../public/img/hash.jpg";
+import { computeHash } from "../../utils/crypto-functions";
 
-export default function PasswordHashScreen() {
-  const [password, setPassword] = useState('supersecretpassword')
-  const [hashPassword, setHashPassword] = useState('')
-  const [password1, setPassword1] = useState('supersecretpassword')
-  const [result1, setResult1] = useState(false) // frontend
-  const [result2, setResult2] = useState(false) // backend
+export default function HashScreen() {
+  const algorithms = ["md5", "sha1", "sha256", "sha384", "sha512"];
 
-  // 사용자 등록
-  const submitHandler = async () => {
-    let hash = bcrypt.hashSync(password, 8)
-    setHashPassword(hash)
-  }
+  const [algorithm, setAlgorithm] = useState("sha256");
+  const [inputText, setInputText] = useState("input your message");
+  const [hashValue1, setHashValue1] = useState("");
+  const [hashValue2, setHashValue2] = useState("");
 
-  // 로그인
-  const loginHandler = async () => {
-    await axios
-      .post('/api/crypto/passwordHash', { password, password1 })
-      .then((res) => {
-        setResult2(res.data.result)
-      })
+  const submitHandler = () => {
+    axios.post("/api/crypto/hash", { algorithm, inputText }).then((res) => {
+      setHashValue2(res.data.hashValue);
+    });
 
-    const res = await bcrypt.compareSync(password1, hashPassword)
-    setResult1(res)
-  }
+    setHashValue1(computeHash(algorithm, inputText));
+  };
 
   return (
-    <Layout title="PasswordHash">
+    <Layout title="Hash">
       <form className="mx-auto max-w-screen-lg">
-        <h1 className="text-3xl mb-4 font-bold">
-          Password Hash Salting (패스워드 해시 저장)
-        </h1>
+        <h1 className="text-3xl mb-4 font-bold"> Hash (해시함수)</h1>
 
-        <p>
-          사용자 등록시 사용자가 입력하는 패스워드를 서버에 그대로 저장하지 않고
-          솔트를 추가하여 패스워드 해시를 계산하여 저장한다. 로그인시에는
-          패스워드가 맞는지 검증할 수 있다.
-        </p>
-
-        <div className="mx-20">
-          <Image src={bcryptPic} alt="password hash" />
+        <div className="mb-4 flex flex-row">
+          <div className="basis-1/2">
+            <label htmlFor="algo" className="mb3 font-bold">
+              Select hash algorithm (default to sha256)
+            </label>
+            {algorithms.map((algo) => (
+              <div key={algo} className="mx-4">
+                <input
+                  name="algo"
+                  className="p-2 outline-none focus:ring-0"
+                  id={algo}
+                  type="radio"
+                  onChange={() => setAlgorithm(algo)}
+                />
+                <label className="p-2" htmlFor={algo}>
+                  {algo}
+                </label>
+              </div>
+            ))}
+          </div>
+          <div className="basis-1/2">
+            <Image src={hashPic} alt="hash function" />
+          </div>
         </div>
 
         <div className="mb-4">
-          <label htmlFor="password" className="mb-3 font-bold">
-            Password registration
+          <label htmlFor="input" className="font-bold">
+            Input Message
           </label>
-          <input
-            type="text"
-            name="password"
-            id="password"
+          <textarea
+            name="input"
+            id="input"
+            cols="50"
+            rows="3"
             className="w-full bg-gray-50"
-            defaultValue={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            autoFocus
+            placeholder="텍스트를 입력하세요"
+            value={inputText}
+            onChange={(e) => setInputText(e.target.value)}
+          ></textarea>
         </div>
 
         <div className="mb-4">
@@ -67,63 +75,26 @@ export default function PasswordHashScreen() {
             type="button"
             onClick={submitHandler}
           >
-            Password Registration (패스워드 등록)
-          </button>
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="hpassword" className="mb-3 font-bold">
-            Hashed Password
-          </label>
-          <input
-            type="text"
-            name="hpassword"
-            id="hpassword"
-            className="w-full bg-gray-50"
-            defaultValue={hpassword}
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="password1" className="mb-3 font-bold">
-            Password login
-          </label>
-          <input
-            type="text"
-            name="password1"
-            id="password1"
-            className="w-full bg-gray-50"
-            defaultValue={password1}
-            onChange={(e) => setPassword1(e.target.value)}
-          />
-        </div>
-
-        <div className="mb-4">
-          <button
-            className="primary-button w-full"
-            type="button"
-            onClick={loginHandler}
-          >
-            Password Login (패스워드 로그인)
+            Compute Hash
           </button>
         </div>
 
         <div className="mb-4 overflow-x-auto">
-          <h2 className="mb-3 font-bold">Result</h2>
+          <h2 className="mb-3 font-bold"> Result</h2>
           <div className="px-4 bg-slate-200">
-            <p>Registered password: {password}</p>
-            <p>Login password: {password1}</p>
-            <p className="text-red-700 font-bold">
-              Login result (client-side):{' '}
-              {result ? '로그인 성공' : '로그인 실패'}
+            <p> Hash Algorithm : {algorithm}</p>
+            <p> Input text : {inputText}</p>
+            <p className="overflow-x-auto text-red-700">
+              Hash Value (Client-side) : {hashValue1} ({hashValue1.length * 4}{" "}
+              bits)
             </p>
-            <p className="text-red-700 font-bold">
-              Login result (server-side):{' '}
-              {result1 ? '로그인 성공' : '로그인 실패'}
+            <p className="overflow-x-auto text-blue-700">
+              Hash Value (Server-side) : {hashValue2} ({hashValue2.length * 4}{" "}
+              bits)
             </p>
           </div>
         </div>
       </form>
     </Layout>
-  )
+  );
 }

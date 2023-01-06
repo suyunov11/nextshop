@@ -1,26 +1,26 @@
-import Image from 'next/image'
-import React, { useState } from 'react'
-import Layout from '../../components/Layout'
-import forge from 'node-forge'
-import axios from 'axios'
-import hashPic from '../../public/img/hash.jpg'
-import { computeHash } from '../../utils/crypto-functions'
+import Image from "next/image";
+import React, { useState } from "react";
+import Layout from "../../components/Layout";
+// import forge from 'node-forge'
+import axios from "axios";
+import hashPic from "../../public/img/hash.jpg";
+import { computeHash } from "../../utils/crypto-functions";
 
 export default function HashScreen() {
-  const algorithms = ['md5', 'sha1', 'sha256', 'sha384', 'sha512']
+  const algorithms = ["md5", "sha1", "sha256", "sha384", "sha512"];
 
-  const [algorithm, setAlgorithm] = useState('sha256')
-  const [inputText, setInputText] = useState('input your message')
-  const [hashValue1, setHashValue1] = useState('')
-  const [hashValue2, setHashValue2] = useState('')
+  const [algorithm, setAlgorithm] = useState("sha256");
+  const [inputText, setInputText] = useState("input your message");
+  const [hashValue1, setHashValue1] = useState("");
+  const [hashValue2, setHashValue2] = useState("");
 
   const submitHandler = () => {
-    axios.post('/api/crypto/hash', { algorithm, inputText }).then((res) => {
-      setHashValue2(res.data.hashValue)
-    })
+    axios.post("/api/crypto/hash", { algorithm, inputText }).then((res) => {
+      setHashValue2(res.data.hashValue);
+    });
 
-    setHashValue1(computeHash(algorithm, inputText))
-  }
+    setHashValue1(computeHash(algorithm, inputText));
+  };
 
   return (
     <Layout title="Hash">
@@ -85,16 +85,16 @@ export default function HashScreen() {
             <p> Hash Algorithm : {algorithm}</p>
             <p> Input text : {inputText}</p>
             <p className="overflow-x-auto text-red-700">
-              Hash Value (Client-side) : {hashValue1} ({hashValue1.length * 4}{' '}
+              Hash Value (Client-side) : {hashValue1} ({hashValue1.length * 4}{" "}
               bits)
             </p>
             <p className="overflow-x-auto text-blue-700">
-              Hash Value (Server-side) : {hashValue2} ({hashValue2.length * 4}{' '}
+              Hash Value (Server-side) : {hashValue2} ({hashValue2.length * 4}{" "}
               bits)
             </p>
           </div>
         </div>
       </form>
     </Layout>
-  )
+  );
 }
